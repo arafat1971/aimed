@@ -258,48 +258,39 @@ class IosSettingsSegmentedBar extends StatelessWidget {
 }
 
 Color iosSettingsIconColor(dynamic icon, Color? iconBg) {
+  // Explicit override always wins (callers that intentionally set a status color).
   if (iconBg != null) {
     return iconBg.withValues(alpha: 1);
   }
 
+  // Cal AI de-noise: settings icons are MONOCHROME by default. Only true
+  // destructive/exit actions keep a status color (red). Everything else uses
+  // one neutral tone so the list reads calm, not rainbow. (Was: a different
+  // bright system color per emoji — the main source of visual noise.)
+  const neutral = IosSettingsTokens.systemGray;
+
   if (icon is IconData) {
     return switch (icon) {
-      Icons.assignment_rounded => IosSettingsTokens.systemRed,
-      Icons.apple_rounded => IosSettingsTokens.systemGray,
-      _ => IosSettingsTokens.systemBlue,
+      Icons.delete_forever_rounded || Icons.logout_rounded =>
+        IosSettingsTokens.systemRed,
+      _ => neutral,
     };
   }
 
   final token = icon is String ? icon : null;
   return switch (token) {
-    '🌐' => IosSettingsTokens.systemBlue,
-    '🎯' => IosSettingsTokens.systemOrange,
-    '🩺' => IosSettingsTokens.systemRed,
-    '🎂' => IosSettingsTokens.systemPink,
-    '🧬' => IosSettingsTokens.systemPurple,
-    '💳' => IosSettingsTokens.systemIndigo,
-    '🔄' => IosSettingsTokens.systemTeal,
-    '🎬' || '🚀' => IosSettingsTokens.systemPurple,
-    '📊' => IosSettingsTokens.systemBlue,
-    '🚪' => IosSettingsTokens.systemGray,
-    '🗑️' => IosSettingsTokens.systemRed,
-    '💬' => IosSettingsTokens.systemGreen,
-    '⭐' => IosSettingsTokens.systemOrange,
-    '🔐' || '🛡️' => IosSettingsTokens.systemGray,
-    '📜' || '📄' => IosSettingsTokens.systemBlue,
-    'ℹ️' => IosSettingsTokens.systemBlue,
-    '🔔' => IosSettingsTokens.systemRed,
-    '⚡' => IosSettingsTokens.systemOrange,
-    '⏰' => IosSettingsTokens.systemIndigo,
-    '👨‍👩‍👧' => IosSettingsTokens.systemGreen,
-    '✨' => IosSettingsTokens.systemPink,
-    '❤️' => IosSettingsTokens.systemRed,
-    '💊' => IosSettingsTokens.systemTeal,
-    '📥' => IosSettingsTokens.systemBlue,
-    '⚖️' => IosSettingsTokens.systemGray,
-    _ => IosSettingsTokens.systemBlue,
+    // Keep red ONLY for destructive/critical signals.
+    '🗑️' || '🚪' => IosSettingsTokens.systemRed,
+    _ => neutral,
   };
 }
+
+// ── Legacy rainbow mapping removed ─────────────────────────────────────
+// The per-emoji bright-color switch (🎯→orange, 🩺→red, 🎂→pink, 🧬→purple…)
+// was the main source of settings visual noise. Replaced by the monochrome
+// default in iosSettingsIconColor above, per CAL_AI_DESIGN_SPEC.md. If you ever
+// want the iOS-style rainbow back, it's in git history before this commit.
+
 
 IconData? iosSettingsResolveIcon(dynamic icon) {
   if (icon is IconData) return icon;

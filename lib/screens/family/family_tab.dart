@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/app_routes.dart';
-import '../../core/constants/premium_graphics.dart';
+import '../../core/constants/med_ai_assets.dart';
 import '../../providers/app_state.dart';
 import '../../theme/med_ai_ui.dart';
 import '../../core/utils/date_formatter.dart';
@@ -16,7 +16,7 @@ import 'widgets/add_cg_flow.dart';
 import 'widgets/join_as_cg_view.dart';
 import 'widgets/alert_log_widgets.dart';
 import '../../widgets/common/premium_empty_state.dart';
-import '../../widgets/common/paywall_sheet.dart';
+
 import '../../widgets/common/premium_texture.dart';
 
 enum FamilyView {
@@ -181,20 +181,13 @@ class _FamilyTabState extends State<FamilyTab> {
               isScrolled: _isScrolled,
               scrollController: _scrollController,
               onPivotChanged: (v) => setState(() => _pivot = v),
-              onAddCg: () {
-                if (state.isPremium) {
-                  setState(() => _view = FamilyView.addStep1);
-                } else {
-                  PaywallSheet.show(context);
-                }
-              },
-              onJoin: () {
-                if (state.isPremium) {
-                  setState(() => _view = FamilyView.join);
-                } else {
-                  PaywallSheet.show(context);
-                }
-              },
+              // Inviting/joining is FREE — it's the viral growth loop, never
+              // paywall it (premium gates the advanced monitoring insights
+              // instead, in monitoring_widgets). Gating the invite here was
+              // masked while isPremium was hardcoded true; now it's real, so an
+              // un-gate is required or non-premium users can't add anyone.
+              onAddCg: () => setState(() => _view = FamilyView.addStep1),
+              onJoin: () => setState(() => _view = FamilyView.join),
               onDashboard: (cg) => setState(() => _dashboardCg = cg),
               onAlertDetail: (a) => setState(() => _alertDetail = a),
               onMarkSeen: () => state.markAlertsAsSeen());
@@ -736,7 +729,7 @@ class HubView extends StatelessWidget {
       subtitle:
           'Invite family or medical professionals to monitor your medication safety.',
       icon: Icons.shield_outlined,
-      illustrationAsset: PremiumGraphics.familyCare,
+      visual: _mascotVisual(MedAiAssets.mascotCaregiverElder, Icons.shield_outlined, L),
       actionLabel: 'Invite Guardian',
       onAction: onAddCg,
     );
@@ -748,10 +741,33 @@ class HubView extends StatelessWidget {
       subtitle:
           'Join as a caregiver to see real-time health updates for your loved ones.',
       icon: Icons.groups_rounded,
-      illustrationAsset: PremiumGraphics.familyCare,
+      visual: _mascotVisual(MedAiAssets.mascotCaregiverElder, Icons.groups_rounded, L),
       actionLabel: 'Join Circle',
       onAction: onJoin,
     );
+  }
+
+  /// Ghost mascot for empty states, with a graceful icon fallback if the PNG
+  /// isn't bundled yet.
+  Widget _mascotVisual(String asset, IconData fallback, AppThemeColors L) {
+    final img = Image.asset(
+      asset,
+      width: 56,
+      height: 56,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => Icon(fallback, size: 44, color: L.accent),
+    );
+    if (MedAiA11y.reducedMotion(context)) return img;
+    // Subtle one-shot fade + scale-in; no loop (garnish, not billboard).
+    return img
+        .animate()
+        .fadeIn(duration: 400.ms, curve: Curves.easeOut)
+        .scale(
+          begin: const Offset(0.85, 0.85),
+          end: const Offset(1, 1),
+          duration: 500.ms,
+          curve: Curves.easeOutBack,
+        );
   }
 }
 

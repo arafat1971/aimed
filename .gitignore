@@ -71,3 +71,6 @@ run_verbose_log.txt
 build_output.txt
 analyze*.txt
 crash.txt
+
+images/
+*.jpg # optional: keep raw art out of the repo
