@@ -317,9 +317,12 @@ class HealthCoachCard extends StatelessWidget {
     return Column(
       children: insights.map((ins) {
         final cat = ins.category.toLowerCase();
-        final color = (cat.contains('safe') || cat.contains('warn'))
-            ? L.error
-            : (cat.contains('adh') ? AppColors.limeDeep : L.purple);
+        // Cal AI de-noise: keep a real status color ONLY for safety/warnings;
+        // everything else (adherence, optimization, etc.) uses one neutral tone
+        // so the insight list reads calm instead of rainbow-tagged. (Was:
+        // lime-green for adherence, purple for optimization.)
+        final isWarning = cat.contains('safe') || cat.contains('warn');
+        final color = isWarning ? L.error : L.sub;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),

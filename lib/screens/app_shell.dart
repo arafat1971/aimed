@@ -450,17 +450,14 @@ class _AppShellState extends State<AppShell>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: context.isDark
-                        ? [L.text, L.text.withValues(alpha: 0.85)]
-                        : [
-                            L.accent,
-                            L.accent.withValues(alpha: 0.88),
-                          ],
+                    // Cal AI: the primary action (Scan FAB) is near-black, not a
+                    // brand color. Color is reserved for data viz + streak only.
+                    colors: [L.text, L.text.withValues(alpha: 0.85)],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: AppShadows.glow(
-                    context.isDark ? L.accent : L.accent,
-                    intensity: 0.35,
+                    L.text.withValues(alpha: 0.4),
+                    intensity: 0.25,
                   ),
                 ),
                 child: Center(
@@ -518,7 +515,9 @@ class _AppShellState extends State<AppShell>
                       : EdgeInsets.zero,
                   decoration: selected
                       ? BoxDecoration(
-                          color: L.accent.withValues(alpha: 0.12),
+                          // Neutral active-tab pill (Cal AI: no brand color on
+                          // nav; active = darker icon + subtle grey pill).
+                          color: L.fill,
                           borderRadius: BorderRadius.circular(14),
                         )
                       : null,

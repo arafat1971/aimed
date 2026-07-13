@@ -41,7 +41,8 @@ class _AiQuickLogFabState extends State<AiQuickLogFab> {
             borderRadius: BorderRadius.circular(32),
             boxShadow: [
               BoxShadow(
-                color: L.accent.withValues(alpha: 0.28),
+                // Neutral soft shadow (Cal AI: no brand-color glow on chrome).
+                color: Colors.black.withValues(alpha: 0.12),
                 blurRadius: 24,
                 spreadRadius: 2,
                 offset: const Offset(0, 8),
