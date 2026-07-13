@@ -276,8 +276,7 @@ class _StreakModalState extends State<StreakModal> {
             ),
           ),
         ],
-      ),
-    );
+      ),    );
   }
 
   Widget _buildHeroMetric(
