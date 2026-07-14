@@ -439,7 +439,7 @@ class HubView extends StatelessWidget {
                       if (pivot == 1) ...[
                         // FAMILY CIRCLE (Monitoring others)
                         if (state.monitoredPatients.isEmpty)
-                          _buildEmptyMonitoringState(L, onJoin)
+                          _buildEmptyMonitoringState(context, L, onJoin)
                               .animate()
                               .fadeIn(duration: 600.ms)
                         else ...[
@@ -649,7 +649,7 @@ class HubView extends StatelessWidget {
                         ],
 
                         if (state.caregivers.isEmpty)
-                          _buildEmptyState(L, onAddCg)
+                          _buildEmptyState(context, L, onAddCg)
                               .animate()
                               .fadeIn(duration: 600.ms)
                         else ...[
@@ -723,25 +723,29 @@ class HubView extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(AppThemeColors L, VoidCallback onAddCg) {
+  Widget _buildEmptyState(
+      BuildContext context, AppThemeColors L, VoidCallback onAddCg) {
     return PremiumEmptyState(
       title: 'No guardians found',
       subtitle:
           'Invite family or medical professionals to monitor your medication safety.',
       icon: Icons.shield_outlined,
-      visual: _mascotVisual(MedAiAssets.mascotCaregiverElder, Icons.shield_outlined, L),
+      visual: _mascotVisual(
+          context, MedAiAssets.mascotCaregiverElder, Icons.shield_outlined, L),
       actionLabel: 'Invite Guardian',
       onAction: onAddCg,
     );
   }
 
-  Widget _buildEmptyMonitoringState(AppThemeColors L, VoidCallback onJoin) {
+  Widget _buildEmptyMonitoringState(
+      BuildContext context, AppThemeColors L, VoidCallback onJoin) {
     return PremiumEmptyState(
       title: 'Protect your family',
       subtitle:
           'Join as a caregiver to see real-time health updates for your loved ones.',
       icon: Icons.groups_rounded,
-      visual: _mascotVisual(MedAiAssets.mascotCaregiverElder, Icons.groups_rounded, L),
+      visual: _mascotVisual(
+          context, MedAiAssets.mascotCaregiverElder, Icons.groups_rounded, L),
       actionLabel: 'Join Circle',
       onAction: onJoin,
     );
@@ -749,7 +753,8 @@ class HubView extends StatelessWidget {
 
   /// Ghost mascot for empty states, with a graceful icon fallback if the PNG
   /// isn't bundled yet.
-  Widget _mascotVisual(String asset, IconData fallback, AppThemeColors L) {
+  Widget _mascotVisual(
+      BuildContext context, String asset, IconData fallback, AppThemeColors L) {
     final img = Image.asset(
       asset,
       width: 56,

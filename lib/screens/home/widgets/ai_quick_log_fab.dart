@@ -21,7 +21,6 @@ class _AiQuickLogFabState extends State<AiQuickLogFab> {
 
   @override
   Widget build(BuildContext context) {
-    final L = context.L;
     return AnimatedPressable(
       onTapDown: (_) {
         HapticEngine.selection();

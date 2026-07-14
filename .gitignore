@@ -74,3 +74,4 @@ crash.txt
 
 images/
 *.jpg # optional: keep raw art out of the repo
+.tmp_check/ # mascot-extraction scratch (contact sheets, grid renders)
