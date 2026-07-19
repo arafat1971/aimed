@@ -95,8 +95,9 @@ void main() {
       expect(appState.med.getStreak(), 0);
     });
 
-    test('getAdherenceScore returns 1.0 with no history', () {
-      expect(appState.med.getAdherenceScore(), 1.0);
+    test('getAdherenceScore returns 0.0 with no meds and no history', () {
+      // Brand-new users score 0, not a misleading 100% "Excellent".
+      expect(appState.med.getAdherenceScore(), 0.0);
     });
 
     test('getTrendData returns 30 entries', () {
@@ -126,7 +127,8 @@ void main() {
           .thenAnswer((_) => Future.value([med]));
 
       await appState.med.loadData();
-      expect(appState.getAdherenceScore(), 1.0); // No history yet, defaults 1.0
+      // Med scheduled daily but nothing logged yet → 0 taken / N scheduled.
+      expect(appState.getAdherenceScore(), 0.0);
 
       // Mock history for 30 days
       final now = DateTime.now();
@@ -145,6 +147,59 @@ void main() {
       await appState.med.loadData();
 
       expect(appState.med.getStreak(), 3);
+    });
+  });
+
+  group('AppState connectivity', () {
+    AppState buildWith(Future<bool> Function() probe) => AppState(
+          medRepo: mockMedRepo,
+          userRepo: mockUserRepo,
+          symptomRepo: mockSymptomRepo,
+          audioPlayer: mockAudioPlayer,
+          prefs: mockPrefs,
+          linkService: mockLinkService,
+          probeOnline: probe,
+        );
+
+    test('checkConnectivity flips isOffline when probe fails', () async {
+      final state = buildWith(() async => false);
+      expect(state.isOffline, false);
+
+      final online = await state.checkConnectivity();
+
+      expect(online, false);
+      expect(state.isOffline, true);
+    });
+
+    test('going back online clears a lingering networkErrorMessage', () async {
+      var reachable = false;
+      final state = buildWith(() async => reachable);
+
+      // Simulate a request-level failure while isOffline stayed false.
+      state.setNetworkError('Timed out');
+      expect(state.networkErrorMessage, 'Timed out');
+      expect(state.isOffline, false);
+
+      var notified = 0;
+      state.addListener(() => notified++);
+
+      reachable = true;
+      final online = await state.checkConnectivity();
+
+      expect(online, true);
+      expect(state.networkErrorMessage, isNull);
+      expect(notified, greaterThan(0),
+          reason: 'clearing the error should notify listeners');
+    });
+
+    test('checkConnectivity does not notify when nothing changed', () async {
+      final state = buildWith(() async => true);
+      var notified = 0;
+      state.addListener(() => notified++);
+
+      await state.checkConnectivity();
+
+      expect(notified, 0);
     });
   });
 }

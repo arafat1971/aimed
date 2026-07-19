@@ -29,21 +29,22 @@ class BodyImpactCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AppSpacing.p20),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(AppSpacing.p8),
                   decoration: BoxDecoration(
-                    color: L.accent.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.pastelMint,
+                    borderRadius: BorderRadius.circular(AppRadius.s),
                   ),
-                  child: const Text('🧬', style: TextStyle(fontSize: 18)),
+                  child: Icon(Icons.monitor_heart_rounded,
+                      size: 18, color: L.text),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.p12),
                 Expanded(
                   child: Text(
-                    'Body impact',
+                    HopeVibe.bodyImpactTitle,
                     style: AppTypography.titleMedium.copyWith(
                       color: L.text,
                       fontWeight: FontWeight.w800,
@@ -56,19 +57,19 @@ class BodyImpactCard extends StatelessWidget {
           ),
           Divider(height: 1, color: L.border.withValues(alpha: 0.1)),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AppSpacing.p20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'How it works',
+                  HopeVibe.bodyImpactHow,
                   style: AppTypography.labelSmall.copyWith(
                     color: L.sub,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.p8),
                 Text(
                   impact.mechanismOfAction.isNotEmpty
                       ? impact.mechanismOfAction
@@ -78,12 +79,12 @@ class BodyImpactCard extends StatelessWidget {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.p24),
                 InteractiveBodyMap(
                   activeSystems: impact.bodySystems,
                   medName: medName ?? 'Medicine',
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.p24),
                 PharmaTimelineWidget(
                   medName: medName ?? 'Medicine',
                   onsetMinutes: impact.onsetMinutes.toDouble(),
@@ -92,7 +93,7 @@ class BodyImpactCard extends StatelessWidget {
                   targetOrgans: impact.bodySystems,
                 ),
                 if (impact.bodySystems.isNotEmpty) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.p16),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -100,8 +101,8 @@ class BodyImpactCard extends StatelessWidget {
                         .map(
                           (s) => Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                              horizontal: AppSpacing.p12,
+                              vertical: AppSpacing.p8,
                             ),
                             decoration: BoxDecoration(
                               color: L.accent.withValues(alpha: 0.12),
@@ -123,10 +124,10 @@ class BodyImpactCard extends StatelessWidget {
                         .toList(),
                   ),
                 ],
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.p24),
                 if (impact.ahaFacts.isNotEmpty) ...[
                   _buildAhaCarousel(L, impact.ahaFacts),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.p24),
                 ],
                 if (onAskAIPressed != null)
                   MedAiCTA(
@@ -162,9 +163,9 @@ class BodyImpactCard extends StatelessWidget {
         itemCount: facts.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsetsDirectional.only(end: AppSpacing.p12),
             child: MedAiGlass(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.p16),
               radius: AppRadius.m,
               child: SizedBox(
                 width: 220,
@@ -174,7 +175,7 @@ class BodyImpactCard extends StatelessWidget {
                     Row(
                       children: [
                         const Text('💡', style: TextStyle(fontSize: 14)),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppSpacing.p8),
                         Text(
                           'Did you know?',
                           style: AppTypography.labelSmall.copyWith(
@@ -185,7 +186,7 @@ class BodyImpactCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: AppSpacing.p12),
                     Expanded(
                       child: Text(
                         facts[index],

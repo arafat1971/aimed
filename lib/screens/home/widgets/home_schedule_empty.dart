@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../../core/constants/premium_graphics.dart';
 import '../../../core/constants/med_ai_assets.dart';
 import '../../../core/utils/haptic_engine.dart';
 import '../../../core/utils/manual_add_medicine.dart';
 import '../../../theme/med_ai_ui.dart';
 import '../../../widgets/common/animated_pressable.dart';
-import '../../../widgets/common/premium_illustration_banner.dart';
+import '../../../widgets/common/ghost_mascot.dart';
 import '../../../widgets/common/premium_texture.dart';
 
 class HomeScheduleEmpty extends StatelessWidget {
@@ -31,8 +30,8 @@ class HomeScheduleEmpty extends StatelessWidget {
         : 'Scan or add a medicine to build your daily schedule.';
 
     return PremiumTextureCard(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-      radius: 22,
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.p20, vertical: AppSpacing.p20),
+      radius: AppRadius.l,
       texture: PremiumTextureStyle.fineGrain,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,24 +43,21 @@ class HomeScheduleEmpty extends StatelessWidget {
           Center(
             child: _MascotEntrance(
               reduceMotion: reduceMotion,
-              child: Image.asset(
-                hasMeds
+              child: GhostMascot(
+                asset: hasMeds
                     ? MedAiAssets.mascotHappyPill
                     : MedAiAssets.mascotHomeHeart,
-                height: 72,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => PremiumIllustrationBanner(
-                  asset: hasMeds
-                      ? PremiumGraphics.healthInsights
-                      : PremiumGraphics.onboardingDiagnose,
-                  height: 100,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(12),
-                ),
+                size: 76,
+                // The entrance wrapper handles the reveal; a gentle idle float
+                // keeps the empty state feeling alive without looping bounce.
+                idle: !reduceMotion,
+                semanticLabel: hasMeds
+                    ? 'Nothing scheduled mascot'
+                    : 'Add your first medicine mascot',
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.p16),
           Text(
             title,
             style: AppTypography.titleMedium.copyWith(
@@ -69,7 +65,7 @@ class HomeScheduleEmpty extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppSpacing.p8),
           Text(
             subtitle,
             style: AppTypography.bodySmall.copyWith(
@@ -78,7 +74,7 @@ class HomeScheduleEmpty extends StatelessWidget {
             ),
           ),
           if (!hasMeds && onAdd != null) ...[
-            const SizedBox(height: 14),
+            const SizedBox(height: AppSpacing.p16),
             AnimatedPressable(
               onTap: () {
                 HapticEngine.selection();
@@ -86,7 +82,7 @@ class HomeScheduleEmpty extends StatelessWidget {
               },
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.p16, vertical: AppSpacing.p12),
                 decoration: BoxDecoration(
                   color: L.accent,
                   borderRadius: BorderRadius.circular(12),
@@ -100,13 +96,13 @@ class HomeScheduleEmpty extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.p8),
             AnimatedPressable(
               onTap: () =>
                   startManualAddMedicine(context, source: 'home_empty'),
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.p8, vertical: AppSpacing.p8),
                 child: Text(
                   'Or enter it manually',
                   style: AppTypography.labelMedium.copyWith(

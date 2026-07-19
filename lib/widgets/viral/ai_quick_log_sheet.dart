@@ -287,7 +287,7 @@ class _AiQuickLogSheetState extends State<AiQuickLogSheet>
       width: MedAiA11y.minTapTargetCompact,
       height: MedAiA11y.minTapTargetCompact,
       decoration: BoxDecoration(
-        gradient: AppGradients.accentOrange,
+        gradient: AppGradients.accentHero,
         borderRadius: BorderRadius.circular(14),
         boxShadow: AppShadows.glow(L.accent, intensity: 0.3),
       ),
@@ -389,7 +389,7 @@ class _AiQuickLogSheetState extends State<AiQuickLogSheet>
                 
                 const SizedBox(height: 24),
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     'Or quickly log a meal:',
                     style: AppTypography.labelMedium.copyWith(
@@ -593,7 +593,7 @@ class _AiQuickLogSheetState extends State<AiQuickLogSheet>
                   onTap: _listen,
                   child: AnimatedContainer(
                     duration: MedAiA11y.motion(context, AppDurations.fast),
-                    margin: const EdgeInsets.only(right: 12),
+                    margin: const EdgeInsetsDirectional.only(end: 12),
                     width: MedAiA11y.minTapTargetCompact,
                     height: MedAiA11y.minTapTargetCompact,
                     decoration: BoxDecoration(

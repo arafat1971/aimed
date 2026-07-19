@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../theme/med_ai_ui.dart';
 
 class AiScannerViewfinder extends StatefulWidget {
@@ -68,7 +67,8 @@ class _AiScannerViewfinderState extends State<AiScannerViewfinder>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
+          icon: const Icon(Icons.close, color: AppColors.white),
+          tooltip: 'Close scanner',
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -85,7 +85,7 @@ class _AiScannerViewfinderState extends State<AiScannerViewfinder>
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Container(color: Colors.black.withOpacity(0.1)),
+                child: Container(color: Colors.black.withValues(alpha: 0.1)),
               ),
             ),
           ),

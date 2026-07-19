@@ -35,6 +35,8 @@ class AppSpacing {
 
   // Semantic spacing
   static const double screenPadding = p24;
+  /// Horizontal gutter for main shell tabs (home / dashboard / alarms / family).
+  static const double gutter = p20;
   static const double fieldPadding = p16;
   static const double cardPadding = p16;
   static const double sectionGap = p32;
@@ -182,6 +184,14 @@ class AppTypography {
         letterSpacing: 0.2,
       );
 
+  /// Micro caption / overline — use instead of ad-hoc fontSize 9–11.
+  static TextStyle get caption => GoogleFonts.outfit(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.3,
+        height: 1.3,
+      );
+
   static TextStyle get monoNumber => GoogleFonts.spaceGrotesk(
         fontWeight: FontWeight.w600,
         letterSpacing: -0.5,
@@ -289,12 +299,16 @@ class AppGradients {
         end: Alignment.bottomRight,
       );
 
-  // ── Hero accent gradients (sage + lime — matches reference home) ──
-  static const LinearGradient accentOrange = LinearGradient(
+  // ── Hero accent gradient (sage → lime — matches reference home) ──
+  static const LinearGradient accentHero = LinearGradient(
     colors: [Color(0xFF4A9E86), Color(0xFF8FD14F)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  /// Deprecated: misnamed (it's sage→lime, never orange). Use [accentHero].
+  @Deprecated('Use accentHero — this gradient is sage→lime, not orange')
+  static const LinearGradient accentOrange = accentHero;
 
   static const LinearGradient ringProgress = LinearGradient(
     colors: [Color(0xFF8FD14F), Color(0xFF4A9E86)],
@@ -315,10 +329,10 @@ class AppGradients {
   static LinearGradient get actionRed    => _flat(const Color(0xFFFF3B30));
 
   // Aliases → sage/lime brand system
-  static LinearGradient get cyanFlash => accentOrange;
+  static LinearGradient get cyanFlash => accentHero;
   static LinearGradient get purpleDusk   => _flat(const Color(0xFFBF5AF2));
   static LinearGradient get goldLegend   => _flat(const Color(0xFFFF9F0A));
-  static LinearGradient get sunrise      => accentOrange;
+  static LinearGradient get sunrise      => accentHero;
   static LinearGradient get midnightBlue => _flat(const Color(0xFF0A84FF));
   static LinearGradient get oliveOnboarding => _flat(const Color(0xFF00C853));
   static LinearGradient get oliveBg      => _flat(const Color(0xFFF7F7F7));

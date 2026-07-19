@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/utils/color_utils.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/utils/haptic_engine.dart';
+import '../../../core/utils/scan_safety_mapper.dart';
 import '../../../providers/app_state.dart';
-import '../../../theme/app_theme.dart';
 import '../../../theme/med_ai_ui.dart';
 import '../../../widgets/common/animated_pressable.dart';
 import '../../../widgets/common/premium_texture.dart';
@@ -43,17 +43,27 @@ class HomeDoseRow extends StatelessWidget {
       if (med.form.isNotEmpty) med.form,
     ].join(' · ');
 
+    final doseStatus = taken
+        ? 'Taken'
+        : overdue
+            ? 'Overdue'
+            : 'Due $timeLabel';
+    final reviewNote = (!taken && med.hasCriticalSafetyAlerts)
+        ? '. Review before taking'
+        : '';
+
     return Semantics(
       button: true,
-      label: '${med.name}, $timeLabel',
-      child: GestureDetector(
+      label: '${med.name}, $timeLabel. $doseStatus$reviewNote',
+      child: AnimatedPressable(
         onTap: () {
           HapticEngine.selection();
           onTap();
         },
+        scaleFactor: 0.98,
         child: PremiumTextureCard(
-          padding: const EdgeInsets.all(14),
-          radius: 22,
+          padding: const EdgeInsets.all(AppSpacing.p16),
+          radius: AppRadius.l,
           texture: PremiumTextureStyle.fineGrain,
           child: Row(
             children: [
@@ -62,7 +72,7 @@ class HomeDoseRow extends StatelessWidget {
                 height: 50,
                 decoration: BoxDecoration(
                   color: vialBg,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(AppRadius.m),
                 ),
                 child: Icon(
                   Icons.medication_rounded,
@@ -70,7 +80,7 @@ class HomeDoseRow extends StatelessWidget {
                   color: medColor,
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: AppSpacing.p16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,10 +89,9 @@ class HomeDoseRow extends StatelessWidget {
                       med.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTypography.titleMedium.copyWith(
+                      style: AppTypography.bodyMedium.copyWith(
                         color: taken ? L.text.withValues(alpha: 0.4) : L.text,
                         fontWeight: FontWeight.w800,
-                        fontSize: 15.5,
                         letterSpacing: -0.2,
                         decoration:
                             taken ? TextDecoration.lineThrough : null,
@@ -98,8 +107,24 @@ class HomeDoseRow extends StatelessWidget {
                         style: AppTypography.bodySmall.copyWith(
                           color: L.sub,
                           fontWeight: FontWeight.w500,
-                          fontSize: 12.5,
                         ),
+                      ),
+                    ],
+                    if (!taken && med.hasCriticalSafetyAlerts) ...[
+                      const SizedBox(height: AppSpacing.p4),
+                      Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              size: 12, color: AppColors.amber),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Review before take',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: AppColors.amber,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ],
@@ -109,17 +134,16 @@ class HomeDoseRow extends StatelessWidget {
                 width: 52,
                 child: Text(
                   timeLabel,
-                  textAlign: TextAlign.right,
-                  style: AppTypography.labelSmall.copyWith(
+                  textAlign: TextAlign.end,
+                  style: AppTypography.bodySmall.copyWith(
                     color: overdue && !taken
                         ? L.error
                         : L.sub.withValues(alpha: 0.55),
                     fontWeight: FontWeight.w700,
-                    fontSize: 12,
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: AppSpacing.p12),
               _TakeButton(taken: taken, onTake: onTake),
             ],
           ),
@@ -138,36 +162,43 @@ class _TakeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final L = context.L;
-    return AnimatedPressable(
-      onTap: taken
-          ? null
-          : () {
-              HapticEngine.doseTaken();
-              onTake();
-            },
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: taken
-              ? const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFB9EA6E), Color(0xFF8FD14F)],
-                )
+    return Semantics(
+      button: true,
+      enabled: !taken,
+      label: taken ? 'Dose taken' : 'Mark dose taken',
+      child: AnimatedPressable(
+        onTap: taken
+            ? null
+            : () {
+                HapticEngine.doseTaken();
+                onTake();
+              },
+        child: Container(
+          width: MedAiA11y.minTapTargetCompact,
+          height: MedAiA11y.minTapTargetCompact,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: taken
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.lime, AppColors.limeDeep],
+                  )
+                : null,
+            color: taken ? null : L.card,
+            border: taken
+                ? null
+                : Border.all(
+                    color: L.border.withValues(alpha: 0.65),
+                    width: 2,
+                  ),
+          ),
+          // Dark ink on lime — lime is light, white check fails WCAG (DESIGN.md).
+          child: taken
+              ? const Icon(Icons.check_rounded,
+                  color: AppColors.limeInk, size: 18)
               : null,
-          color: taken ? null : L.card,
-          border: taken
-              ? null
-              : Border.all(
-                  color: L.border.withValues(alpha: 0.65),
-                  width: 2,
-                ),
         ),
-        child: taken
-            ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
-            : null,
       ),
     );
   }

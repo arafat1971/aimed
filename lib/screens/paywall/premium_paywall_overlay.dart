@@ -280,7 +280,7 @@ class _PremiumPaywallOverlayState extends State<PremiumPaywallOverlay> {
                 end: Alignment.bottomCenter,
                 colors: [
                   const Color(0xFF1C1309).withValues(alpha: 0.94), // Dark Gold
-                  const Color(0xFF0B132B).withValues(alpha: 0.98),
+                  AppColors.bgDark.withValues(alpha: 0.98),
                 ],
               ),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -512,8 +512,8 @@ class _PremiumPaywallOverlayState extends State<PremiumPaywallOverlay> {
                   ? null
                   : widget.personalizedHeadline) ??
               (widget.variant == PaywallVariant.onboarding
-                  ? 'Start your free trial — cancel anytime.'
-                  : 'Your complete medication intelligence.'),
+                  ? 'Your success plan starts free — cancel anytime.'
+                  : 'Unlock the full plan made for your medication life.'),
           style: AppTypography.bodyMedium.copyWith(
             color: Colors.white.withValues(alpha: 0.55),
             fontWeight: FontWeight.w500,
@@ -686,11 +686,11 @@ class _PremiumPaywallOverlayState extends State<PremiumPaywallOverlay> {
       children: [
         ...List.generate(
           5,
-          (_) => const Icon(Icons.star_rounded, color: Color(0xFFFFB340), size: 16),
+          (_) => const Icon(Icons.star_rounded, color: AppColors.amberDark, size: 16),
         ),
         const SizedBox(width: 8),
         Text(
-          '4.9 · 50K+ users',
+          '4.9 · Trusted by 500K+ people',
           style: AppTypography.labelSmall.copyWith(
             color: Colors.white.withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
@@ -703,18 +703,19 @@ class _PremiumPaywallOverlayState extends State<PremiumPaywallOverlay> {
   Widget _buildTriggerBanner() {
     final messages = {
       'scan_limit':
-          'You\'ve used your ${RemoteConfigService.freeTierScanLimit} free AI scans.\nUpgrade for unlimited pill recognition.',
+          'Keep scanning with confidence.\nUnlock unlimited AI medicine recognition.',
       'voice_limit':
-          'You\'ve used your ${RemoteConfigService.freeTierVoiceLimit} free AI voice logs.\nUpgrade for unlimited voice logging.',
+          'Keep logging by voice.\nUnlock unlimited AI voice logging.',
       'report_export':
-          'Doctor reports are a Pro feature.\nUnlock PDF exports for your physician.',
+          'Share clear reports with your doctor.\nUnlock PDF exports on Pro.',
       'unlimited_meds':
-          'Free plan is limited to ${RemoteConfigService.freeTierMedLimit} active meds.\nPro gives you unlimited tracking.',
+          'Track every medicine that matters to you.\nPro unlocks unlimited meds.',
       'streak_freeze':
-          'Save your streak with a Streak Freeze.\nAvailable on Pro plans.',
+          'Protect the success you\'ve built.\nStreak Freeze is available on Pro.',
       'onboarding':
-          'Unlock everything Med AI has to offer.\nStart your free trial today.',
-      'generic': 'Unlock everything Med AI has to offer.',
+          'Continue your success plan.\nStart your free trial today.',
+      'generic':
+          'Continue your success plan.\nStart your free trial today.',
     };
 
     final msg = messages[widget.triggerSource] ?? messages['generic']!;
@@ -841,7 +842,7 @@ class _PremiumPaywallOverlayState extends State<PremiumPaywallOverlay> {
               child: AnimatedContainer(
                 duration: MedAiA11y.motion(context, AppDurations.fast),
                 curve: AppCurves.expressive,
-                margin: EdgeInsets.only(left: i == 0 ? 0 : 8),
+                margin: EdgeInsetsDirectional.only(start: i == 0 ? 0 : 8),
                 constraints: const BoxConstraints(minHeight: 88),
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 14),
                 decoration: BoxDecoration(
@@ -1073,17 +1074,17 @@ class _PaywallErrorBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFF453A).withValues(alpha: 0.12),
+        color: AppColors.redDark.withValues(alpha: 0.12),
         borderRadius: AppRadius.roundM,
         border: Border.all(
-          color: const Color(0xFFFF453A).withValues(alpha: 0.35),
+          color: AppColors.redDark.withValues(alpha: 0.35),
           width: 0.5,
         ),
       ),
       child: Row(
         children: [
           const Icon(Icons.error_outline_rounded,
-              color: Color(0xFFFF453A), size: 18),
+              color: AppColors.redDark, size: 18),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1135,8 +1136,8 @@ class _PaywallCTA extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: active
                 ? const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+                    begin: AlignmentDirectional.centerStart,
+                    end: AlignmentDirectional.centerEnd,
                     colors: [
                       AppColors.eatoGold,
                       AppColors.amberDark,
@@ -1160,14 +1161,14 @@ class _PaywallCTA extends StatelessWidget {
                     height: 22,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Color(0xFF0B132B),
+                      color: AppColors.bgDark,
                     ),
                   )
                 : Text(
                     label,
                     style: AppTypography.labelLarge.copyWith(
                       color: active
-                          ? const Color(0xFF0B132B)
+                          ? AppColors.bgDark
                           : Colors.white.withValues(alpha: 0.45),
                       fontWeight: FontWeight.w800,
                       fontSize: 16,

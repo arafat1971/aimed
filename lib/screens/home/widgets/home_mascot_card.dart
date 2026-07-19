@@ -22,42 +22,42 @@ class _HomeMascotCardState extends State<HomeMascotCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _bounceCtrl;
 
-  String _currentQuote = "hydrate before you dehydrate 💧";
+  String _currentQuote = "Your future self is thanking you for every dose you take.";
   bool _isLoading = false;
 
   final List<String> _sleepyQuotes = [
-    "shhh... i'm resting up. let's wake up with a dose! 😴",
-    "still sleepy... did we take our meds yet? ☕",
-    "routine loading... log a dose to wake me up! ⏳",
-    "dreaming of perfect compliance 💤",
+    "One gentle dose at a time — your future self is already proud.",
+    "Rest easy. When you're ready, we'll start your win streak together.",
+    "Peace begins with showing up. Log a dose when you can.",
+    "You're not behind — you're building. Start when you're ready.",
   ];
 
   final List<String> _normalQuotes = [
-    "taking meds = major green flag behavior 💅",
-    "your future self is literally thanking you right now! 👑",
-    "hydrate before you dehydrate 💧",
-    "consistency is the ultimate flex! 💪",
-    "self-care isn't selfish, it's essential 🛡️",
-    "don't forget to drink some water with that 🌊",
-    "let's secure that streak today, bestie! 💅",
-    "taking meds is self-love. facts only 🧬",
+    "Your future self is thanking you for every dose you take.",
+    "Consistency is how success becomes real — you've got this.",
+    "Hydrate, take your meds, trust the plan made for you.",
+    "Knowing your medicine is an act of self-respect.",
+    "Small daily wins compound into the life you want.",
+    "This app was built for people like you — keep going.",
+    "Stay steady. Stay hopeful. You're on the right path.",
+    "Taking meds on time is how you choose yourself.",
   ];
 
   final List<String> _energeticQuotes = [
-    "we love a consistent queen/king/legend ⚡",
-    "streak is looking fire today! keep it up 🔥",
-    "lock in! let's make today 100% compliance 🔒",
-    "unlocked: high energy vibe ⚡",
-    "you are doing amazing sweetie! 💖",
-    "compliance level: god mode 🎮",
+    "You're proving what consistency can do — keep the streak alive.",
+    "This is what winning looks like: calm, clear, on time.",
+    "Lock in today's doses — you're becoming your strongest self.",
+    "Trust the process. Trust yourself. Success is showing up.",
+    "You're not just tracking meds — you're building a better life.",
+    "Level up: one more perfect day of care.",
   ];
 
   final List<String> _happyQuotes = [
-    "your streak is too hot to handle 🔥",
-    "absolute legend behavior right here 🏆",
-    "an absolute icon of consistency 👑",
-    "we are officially unstoppable 🚀",
-    "pure main character energy today ✨",
+    "You're living proof that consistency works. Share the win.",
+    "Legendary streak energy — you are succeeding.",
+    "This is the #1 habit that protects your future.",
+    "Unstoppable — because you showed up for yourself.",
+    "Your success is real. Keep believing. Keep taking.",
   ];
 
   @override
@@ -194,7 +194,7 @@ class _HomeMascotCardState extends State<HomeMascotCard>
               child: Container(
                 width: 28,
                 height: 28,
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(AppSpacing.p4),
                 decoration: BoxDecoration(
                   color: L.card,
                   shape: BoxShape.circle,
@@ -233,16 +233,16 @@ class _HomeMascotCardState extends State<HomeMascotCard>
       button: true,
       label: 'MedAI companion. Tap for a new coaching message.',
       child: MedAiDepthCard(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter, vertical: AppSpacing.p16),
         onTap: _onTap,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             mascot,
-            const SizedBox(width: 16),
+            const SizedBox(width: AppSpacing.p16),
             Expanded(
               child: MedAiGlass(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.p16, AppSpacing.p12, AppSpacing.p16, AppSpacing.p12),
                 radius: 16,
                 tint: L.fill.withValues(alpha: 0.3),
                 child: AnimatedSwitcher(
@@ -261,7 +261,7 @@ class _HomeMascotCardState extends State<HomeMascotCard>
                       ? Container(
                           key: const ValueKey('mascot_coaching_loading'),
                           height: 38,
-                          alignment: Alignment.centerLeft,
+                          alignment: AlignmentDirectional.centerStart,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -274,7 +274,7 @@ class _HomeMascotCardState extends State<HomeMascotCard>
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AppSpacing.p8),
                               ...List.generate(3, (index) {
                                 return Container(
                                   margin:
@@ -339,7 +339,7 @@ class _HomeMascotCardState extends State<HomeMascotCard>
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: AppSpacing.p4),
                             Text(
                               _currentQuote,
                               style: AppTypography.bodyMedium.copyWith(

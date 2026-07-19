@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../domain/entities/medicine.dart';
 import '../../providers/app_state.dart';
 import '../../theme/med_ai_ui.dart';
 import '../../widgets/common/app_scaffold.dart';
@@ -686,7 +685,7 @@ class _MiniBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final L = context.L;
     return Align(
-      alignment: alignEnd ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: alignEnd ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
       child: Container(
         width: 54,
         height: 4,
@@ -695,7 +694,7 @@ class _MiniBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(3),
         ),
         child: FractionallySizedBox(
-          alignment: alignEnd ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: alignEnd ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
           widthFactor: value.clamp(0.0, 1.0),
           child: AnimatedContainer(
             duration: AppDurations.fast,

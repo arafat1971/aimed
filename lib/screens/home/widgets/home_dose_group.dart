@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/haptic_engine.dart';
 import '../../../providers/app_state.dart';
 import '../../../services/smart_alert_service.dart';
 import '../../../theme/app_theme.dart';
+import '../../../widgets/modals/know_your_medicine_sheet.dart';
 import 'home_dose_row.dart';
 
 class HomeDoseGroup extends StatelessWidget {
@@ -28,16 +31,41 @@ class HomeDoseGroup extends StatelessWidget {
   static String _groupLabel(String title) {
     switch (title.toLowerCase()) {
       case 'morning':
-        return '🌅 MORNING';
+        return 'MORNING';
       case 'afternoon':
-        return '☀️ AFTERNOON';
+        return 'AFTERNOON';
       case 'evening':
-        return '🌙 EVENING';
+        return 'EVENING';
       case 'night':
-        return '🌃 NIGHT';
+        return 'NIGHT';
       default:
         return title.toUpperCase();
     }
+  }
+
+  Future<void> _handleTake(
+    BuildContext context,
+    DoseItem d,
+    bool isTaken,
+  ) async {
+    // Untaking skips the briefing.
+    if (isTaken) {
+      HapticEngine.selection();
+      state.toggleDose(d, date: selectedDate);
+      onTakeDose?.call();
+      return;
+    }
+
+    final ok = await KnowYourMedicineSheet.confirmTake(
+      context,
+      med: d.med,
+      doseTimeLabel: fmtTime(d.sched.h, d.sched.m, context),
+    );
+    if (!ok || !context.mounted) return;
+
+    state.toggleDose(d, date: selectedDate);
+    onTakeDose?.call();
+    _showUndoSnackbar(context, d);
   }
 
   @override
@@ -50,7 +78,11 @@ class HomeDoseGroup extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 2, bottom: 10, top: 8),
+          padding: const EdgeInsetsDirectional.only(
+            start: 2,
+            bottom: AppSpacing.p12,
+            top: AppSpacing.p8,
+          ),
           child: Text(
             _groupLabel(title),
             style: AppTypography.labelSmall.copyWith(
@@ -67,17 +99,13 @@ class HomeDoseGroup extends StatelessWidget {
           final isOverdue = !isTaken && doseMins < nowMins;
 
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: AppSpacing.p12),
             child: HomeDoseRow(
               med: d.med,
               sched: d.sched,
               taken: isTaken,
               overdue: isOverdue,
-              onTake: () {
-                state.toggleDose(d, date: selectedDate);
-                onTakeDose?.call();
-                _showUndoSnackbar(context, d);
-              },
+              onTake: () => _handleTake(context, d, isTaken),
               onTap: () => onView(d.med),
             ),
           );

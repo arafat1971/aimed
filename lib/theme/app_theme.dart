@@ -38,17 +38,20 @@ class AppColors {
   static const Color grey800 = Color(0xFF1E293B); // Slate 800
   static const Color grey900 = Color(0xFF0F172A); // Slate 900
 
-  // ── ⭐ HERO ACCENT — Premium Sage Green ─────────────
-  // This is the ONLY accent color in the entire app
-  static const Color accent      = Color(0xFF4A9E86); // Premium Vibrant Sage Green
-  static const Color accentLight = Color(0xFF8EDABF); // Lighter variant
+  // ── ⭐ ACCENT DUO (see DESIGN.md §3.1) ─────────────
+  // TWO accents, split strictly by domain — never three, never ad-hoc:
+  //   • SAGE (this)  → clinical / scan / medicine detail / safety / caregiver / AI
+  //   • LIME (below) → daily / home / dashboard / success / streaks / CTAs
+  // Danger stays red; orange is RETIRED. Pick by what the surface is ABOUT.
+  static const Color accent      = Color(0xFF4A9E86); // Sage — clinical primary
+  static const Color accentLight = Color(0xFF8EDABF); // Lighter sage variant
   static const Color sageGreen   = accent;
   static const Color oceanBlue   = Color(0xFF0C2D48); // Deep Luxury Blue
   static const Color coralRed    = Color(0xFFFF5E5B); // Premium Soft Red
 
-  // ── ⭐ REFERENCE PALETTE (2026 fresh health-tracker look) ─────────
-  // Lime-green signature + soft pastel category tints on pure white,
-  // from the reference design set. Used by the redesigned home surface.
+  // ── ⭐ LIME — daily / success accent (accent duo, see DESIGN.md §3.1) ─────
+  // Lime-green signature + soft pastel category tints on pure white, from the
+  // reference design set. Owns home/dashboard/streaks/success/primary CTAs.
   static const Color lime        = Color(0xFFB4E869); // signature hero card
   static const Color limeDeep    = Color(0xFF8FD14F); // lime, higher contrast
   static const Color limeInk     = Color(0xFF2E3D1B); // text on lime
@@ -76,7 +79,7 @@ class AppColors {
   static const Color primaryBlue      = bgDark;
   static const Color primaryBlueDark  = cardDark;
   static const Color primaryBlueLight = cardDark2;
-  static const Color cyanAccent     = accent; // map to orange
+  static const Color cyanAccent     = accent; // legacy alias → sage (orange retired)
   static const Color coralAccent    = accent;
   static const Color lavenderAccent = purple;
   static const Color cyberPink      = accent;
@@ -90,6 +93,28 @@ class AppColors {
   static const Color successDark = greenDark;
   static const Color warningDark = amberDark;
   static const Color errorDark   = redDark;
+
+  /// Electric CTA cyan (2026 accent system). Prefer over raw `0xFF6CF2D2`.
+  static const Color electric = Color(0xFF6CF2D2);
+  /// Deeper sage for pressed/onboarding ink variants.
+  static const Color accentDeep = Color(0xFF3D8A72);
+
+  // Drift aliases — same hue family as brand tokens (kills Tailwind/ad-hoc hex).
+  static const Color dangerSoft = Color(0xFFEF4444); // maps ← Tailwind red-500
+  static const Color successSoft = Color(0xFF10B981); // maps ← Tailwind emerald
+  static const Color warningSoft = Color(0xFFF59E0B); // maps ← Tailwind amber
+  static const Color infoSoft = Color(0xFF0A84FF); // maps ← AppColors.blue
+  static const Color indigo = Color(0xFF6366F1);
+  static const Color violet = Color(0xFF8B5CF6);
+  static const Color orangeIos = Color(0xFFFF9500); // iOS system orange
+  static const Color pinkSystem = Color(0xFFFF2D55);
+
+  /// Cal AI icon-badge fill opacity (~12%). Use [badgeFill] — never scatter alphas.
+  static const double badgeFillOpacity = 0.12;
+
+  /// Soft chip behind icons on neutral cards (Cal AI pattern).
+  static Color badgeFill(Color ink) =>
+      ink.withValues(alpha: badgeFillOpacity);
 
   static const Color lRed    = red;
   static const Color dRed    = redDark;
@@ -441,9 +466,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
   final Color glassBorder;
   final List<BoxShadow> shadowSoft;
   final LinearGradient mainGradient;
-  // Cal AI additions
-  final Color accent;        // #FF6B35 orange — only accent
-  final Color accentLight;   // Orange 15% fill
+  // Accent duo (DESIGN.md §3.1): theme `accent` resolves to SAGE (clinical
+  // primary). Lime (daily/success) is applied at the surface via AppColors.lime.
+  final Color accent;        // sage — clinical primary (orange retired)
+  final Color accentLight;   // sage 15% fill
 
   const AppThemeColors({
     required this.bg,
@@ -612,8 +638,8 @@ extension ThemeContextExtension on BuildContext {
 
 /// 2026 unified accent tokens — electric CTA on sage wellness base.
 extension AppThemeColors2026 on AppThemeColors {
-  static const Color electric = Color(0xFF6CF2D2);
-  static const Color wellness = Color(0xFF4A9E86);
+  static const Color electric = AppColors.electric;
+  static const Color wellness = AppColors.accent;
 
   Color get accentElectric => electric;
   Color get accentWellness => wellness;
