@@ -240,61 +240,64 @@ class CompleteProfileCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (c) => StatefulBuilder(
-        builder: (context, setModalState) {
-          final profile = state.profile;
-          final selected = List<String>.from(profile?.motivation ?? []);
-          final L = context.L;
+      builder: (c) {
+        final profile = state.profile;
+        final selected = List<String>.from(profile?.motivation ?? []);
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final L = context.L;
 
-          return ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            child: MedAiGlass(
-              padding: const EdgeInsets.all(AppSpacing.p24),
-              radius: 32,
-              showBorder: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(title, style: AppTypography.headlineMedium),
-                  const SizedBox(height: AppSpacing.p16),
-                  ...options.map((opt) {
-                    final val = opt['v']!;
-                    final isSel = selected.contains(val);
-                    return CheckboxListTile(
-                      secondary: Text(opt['e']!,
-                          style: AppTypography.displayLarge
-                              .copyWith(fontSize: 24)),
-                      title: Text(val),
-                      value: isSel,
-                      activeColor: L.secondary,
-                      onChanged: (checked) {
-                        setModalState(() {
-                          if (checked == true) {
-                            if (!selected.contains(val)) selected.add(val);
-                          } else {
-                            selected.remove(val);
-                          }
-                        });
-                        HapticEngine.selection();
+            return ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(32)),
+              child: MedAiGlass(
+                padding: const EdgeInsets.all(AppSpacing.p24),
+                radius: 32,
+                showBorder: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(title, style: AppTypography.headlineMedium),
+                    const SizedBox(height: AppSpacing.p16),
+                    ...options.map((opt) {
+                      final val = opt['v']!;
+                      final isSel = selected.contains(val);
+                      return CheckboxListTile(
+                        secondary: Text(opt['e']!,
+                            style: AppTypography.displayLarge
+                                .copyWith(fontSize: 24)),
+                        title: Text(val),
+                        value: isSel,
+                        activeColor: L.secondary,
+                        onChanged: (checked) {
+                          setModalState(() {
+                            if (checked == true) {
+                              if (!selected.contains(val)) selected.add(val);
+                            } else {
+                              selected.remove(val);
+                            }
+                          });
+                          HapticEngine.selection();
+                        },
+                      );
+                    }),
+                    const SizedBox(height: AppSpacing.p24),
+                    MedAiCTA(
+                      label: 'Save selection',
+                      onTap: () {
+                        state.updateProfileFromMap({field: selected});
+                        Navigator.pop(c);
+                        HapticEngine.success();
                       },
-                    );
-                  }),
-                  const SizedBox(height: AppSpacing.p24),
-                  MedAiCTA(
-                    label: 'Save selection',
-                    onTap: () {
-                      state.updateProfileFromMap({field: selected});
-                      Navigator.pop(c);
-                      HapticEngine.success();
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.p16),
-                ],
+                    ),
+                    const SizedBox(height: AppSpacing.p16),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }

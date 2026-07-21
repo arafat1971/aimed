@@ -37,7 +37,8 @@ class _CaregiverCardState extends State<CaregiverCard> {
         child: MedAiDepthCard(
         padding: const EdgeInsets.all(AppSpacing.p20),
         radius: AppRadius.l,
-        accentGlow: isActive,
+        // Soft trust — no cyber-electric glow on caregiver cards.
+        accentGlow: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

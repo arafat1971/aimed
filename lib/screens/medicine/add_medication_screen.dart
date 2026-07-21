@@ -253,7 +253,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.p16),
                       decoration: BoxDecoration(
-                        color: AppColors.pastelLilac,
+                        color: AppColors.pastelMint,
                         borderRadius: BorderRadius.circular(AppRadius.l),
                       ),
                       child: Row(

@@ -36,14 +36,19 @@ class _JoinAsCaregiverViewState extends State<JoinAsCaregiverView> {
   }
 
   Future<void> _checkCode(String code) async {
-    if (code.length < 6) return;
+    final trimmed = code.trim();
+    if (trimmed.length < 6) {
+      setState(() => _error = 'Enter the full 6+ character invite code');
+      return;
+    }
     setState(() {
       _isChecking = true;
       _error = null;
     });
 
     try {
-      await widget.state.joinCareTeam(code);
+      await widget.state.joinCareTeam(trimmed);
+      if (!mounted) return;
       final patients = widget.state.monitoredPatients;
       final patient = patients.isNotEmpty
           ? patients.last
@@ -59,6 +64,7 @@ class _JoinAsCaregiverViewState extends State<JoinAsCaregiverView> {
       ));
       widget.state.showToast('Connected to ${patient['name'] ?? 'member'}');
     } catch (e) {
+      if (!mounted) return;
       setState(() => _error = e.toString().contains('Invalid')
           ? 'Invalid code'
           : e.toString().contains('your own')
@@ -130,7 +136,7 @@ class _JoinAsCaregiverViewState extends State<JoinAsCaregiverView> {
                             child: MedAiDepthCard(
                               padding: EdgeInsets.zero,
                               radius: AppRadius.squircle,
-                              accentGlow: true,
+                              accentGlow: false,
                               child: Container(
                                 width: 280,
                                 height: 280,

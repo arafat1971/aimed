@@ -87,7 +87,7 @@ class _DashboardAdherenceHeroState extends State<DashboardAdherenceHero>
       padding: const EdgeInsets.fromLTRB(
           AppSpacing.p16, AppSpacing.gutter, AppSpacing.p16, AppSpacing.p20),
       radius: 28,
-      texture: PremiumTextureStyle.fineGrain,
+      texture: PremiumTextureStyle.none,
       child: Semantics(
         label: "Today's adherence $pct percent, $statusLabel",
         child: Column(

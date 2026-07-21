@@ -92,8 +92,8 @@ class DashboardPurrentTopBar extends StatelessWidget {
                       onDailyLog();
                     },
                     child: Container(
-                      width: 42,
-                      height: 42,
+                      width: MedAiA11y.minTapTargetCompact,
+                      height: MedAiA11y.minTapTargetCompact,
                       decoration: BoxDecoration(
                         color: L.card,
                         shape: BoxShape.circle,
@@ -175,13 +175,18 @@ class _MenuPill extends StatelessWidget {
           HapticEngine.selection();
           onTap();
         },
-        child: Container(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minHeight: MedAiA11y.minTapTargetCompact,
+          ),
+          child: Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.p12, vertical: AppSpacing.p8),
           decoration: BoxDecoration(
             color: L.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(color: L.border.withValues(alpha: 0.35)),
           ),
+          alignment: Alignment.center,
           child: Row(
             children: [
               Icon(Icons.grid_view_rounded, size: 16, color: L.text),
@@ -195,6 +200,7 @@ class _MenuPill extends StatelessWidget {
               ),
             ],
           ),
+        ),
         ),
       ),
     );
@@ -255,7 +261,7 @@ class DashboardPurrentMetricGrid extends StatelessWidget {
         children: [
           Expanded(
             child: _PurrentMetricCard(
-              title: 'Day streak',
+              title: 'Streak',
               value: '$streak',
               subtitle: streak == 1 ? 'day' : 'days',
               accent: AppColors.limeDeep,
@@ -264,10 +270,10 @@ class DashboardPurrentMetricGrid extends StatelessWidget {
               trend: streak > 0 ? '↑ active' : null,
             ),
           ),
-          const SizedBox(width: AppSpacing.p12),
+          const SizedBox(width: AppSpacing.p8),
           Expanded(
             child: _PurrentMetricCard(
-              title: 'Doses logged',
+              title: 'Doses',
               value: '$dosesWeek',
               subtitle: 'this week',
               accent: AppColors.infoSoft,
@@ -275,7 +281,7 @@ class DashboardPurrentMetricGrid extends StatelessWidget {
               sparkline: doseSpark,
             ),
           ),
-          const SizedBox(width: AppSpacing.p12),
+          const SizedBox(width: AppSpacing.p8),
           Expanded(
             child: _PurrentMetricCard(
               title: 'Daily avg',
@@ -317,9 +323,9 @@ class _PurrentMetricCard extends StatelessWidget {
     return Container(
       constraints: const BoxConstraints(minHeight: 132),
       padding: const EdgeInsets.fromLTRB(
-        AppSpacing.p16,
-        AppSpacing.p16,
-        AppSpacing.p16,
+        AppSpacing.p12,
+        AppSpacing.p12,
+        AppSpacing.p12,
         AppSpacing.p12,
       ),
       decoration: BoxDecoration(
@@ -334,51 +340,55 @@ class _PurrentMetricCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.labelMedium.copyWith(
-                    color: L.sub,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
               Container(
-                width: 36,
-                height: 36,
+                width: 28,
+                height: 28,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: AppColors.badgeFill(accent),
-                  borderRadius: BorderRadius.circular(11),
+                  borderRadius: BorderRadius.circular(9),
                 ),
-                child: Icon(icon, size: 18, color: accent),
+                child: Icon(icon, size: 15, color: accent),
               ),
+              const Spacer(),
+              if (trend != null)
+                Text(
+                  trend!,
+                  maxLines: 1,
+                  style: AppTypography.caption.copyWith(
+                    color: accent,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 10,
+                  ),
+                ),
             ],
           ),
-          if (trend != null) ...[
-            const SizedBox(height: AppSpacing.p4),
-            Text(
-              trend!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.caption.copyWith(
-                color: accent,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-          const SizedBox(height: AppSpacing.p12),
+          const SizedBox(height: AppSpacing.p8),
           Text(
-            value,
+            title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTypography.headlineLarge.copyWith(
-              fontWeight: FontWeight.w800,
-              color: L.text,
-              letterSpacing: -0.8,
-              height: 1,
+            style: AppTypography.labelSmall.copyWith(
+              color: L.sub,
+              fontWeight: FontWeight.w700,
+              fontSize: 11,
+              letterSpacing: 0.1,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.p4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: AppTypography.headlineLarge.copyWith(
+                fontWeight: FontWeight.w800,
+                color: L.text,
+                letterSpacing: -0.8,
+                height: 1,
+                fontSize: 28,
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.p4),
@@ -389,12 +399,14 @@ class _PurrentMetricCard extends StatelessWidget {
             style: AppTypography.labelSmall.copyWith(
               color: L.sub,
               fontWeight: FontWeight.w600,
+              fontSize: 11,
             ),
           ),
           const SizedBox(height: AppSpacing.p8),
           ExcludeSemantics(
             child: SizedBox(
               height: AppSpacing.p24,
+              width: double.infinity,
               child: CustomPaint(
                 painter: _SparklinePainter(
                   points: sparkline,

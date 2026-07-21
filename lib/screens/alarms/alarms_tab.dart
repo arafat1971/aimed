@@ -510,7 +510,7 @@ class _NextDoseHeroState extends State<_NextDoseHero> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFC2EF7D), Color(0xFFA9E65F)],
+          colors: [AppColors.lime, AppColors.limeDeep],
         ),
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
@@ -538,7 +538,7 @@ class _NextDoseHeroState extends State<_NextDoseHero> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const LiveStatusDot(
-                        color: AppThemeColors2026.electric,
+                        color: AppColors.limeDeep,
                         size: 6,
                       ),
                       const SizedBox(width: AppSpacing.p8),
@@ -728,7 +728,7 @@ class _AlarmCard extends StatelessWidget {
           child: PremiumTextureCard(
         padding: const EdgeInsets.fromLTRB(AppSpacing.p16, AppSpacing.p16, AppSpacing.p16, AppSpacing.p16),
         radius: 22,
-        texture: PremiumTextureStyle.fineGrain,
+        texture: PremiumTextureStyle.none,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

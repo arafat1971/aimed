@@ -469,7 +469,7 @@ class _AddCgStep2State extends State<AddCgStep2> {
                         child: MedAiDepthCard(
                           padding: const EdgeInsets.all(AppSpacing.p20),
                           radius: AppRadius.squircle,
-                          accentGlow: true,
+                          accentGlow: false,
                           color: Colors.white,
                           child: QrImageView(
                             data: widget.inviteCode,

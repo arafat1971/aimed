@@ -138,31 +138,55 @@ class _FamilyTabState extends State<FamilyTab> {
                   color: color,
                   patientUid: patientUid,
                 );
-                s.addCaregiver(cg);
                 final code = await s.createInvite(cg);
+                if (!mounted) return;
+                if (code.isEmpty) {
+                  s.showToast(
+                    'Could not create invite. Check your connection and try again.',
+                    type: 'error',
+                  );
+                  return;
+                }
+                // createInvite persists the caregiver with invite code when missing.
                 setState(() {
-                  _newCg = cg;
+                  _newCg = cg.copyWith(inviteCode: code);
                   _inviteCode = code;
                   _view = FamilyView.addStep2;
                 });
               });
           break;
         case FamilyView.addStep2:
+          final step2Cg = _newCg;
+          if (step2Cg == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) setState(() => _view = FamilyView.hub);
+            });
+            child = const SizedBox.shrink(key: ValueKey('add2-missing'));
+            break;
+          }
           child = AddCgStep2(
               key: const ValueKey('add2'),
-              cg: _newCg!,
+              cg: step2Cg,
               inviteCode: _inviteCode,
               L: L,
               onNext: () {
-                final state = Provider.of<AppState>(context, listen: false);
-                state.activateCaregiver(_newCg!.id);
+                final appState = Provider.of<AppState>(context, listen: false);
+                appState.activateCaregiver(step2Cg.id);
                 setState(() => _view = FamilyView.addStep3);
               });
           break;
         case FamilyView.addStep3:
+          final step3Cg = _newCg;
+          if (step3Cg == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) setState(() => _view = FamilyView.hub);
+            });
+            child = const SizedBox.shrink(key: ValueKey('add3-missing'));
+            break;
+          }
           child = AddCgStep3(
               key: const ValueKey('add3'),
-              cg: _newCg!,
+              cg: step3Cg,
               L: L,
               onDone: () {
                 setState(() {
@@ -255,25 +279,27 @@ class HubView extends StatelessWidget {
       floatingActionButton: pivot == 1
           ? null
           : Padding(
-              padding: const EdgeInsets.only(bottom: 90),
+              padding: EdgeInsets.only(
+                bottom: 90 + MediaQuery.paddingOf(context).bottom,
+              ),
               child: Semantics(
                 button: true,
                 label: 'Add guardian',
                 child: FloatingActionButton.extended(
                   onPressed: onAddCg,
-                  backgroundColor: L.text,
+                  backgroundColor: AppColors.limeDeep,
                   elevation: 0,
                   extendedIconLabelSpacing: 8,
                   shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.roundL,
+                    borderRadius: BorderRadius.circular(999),
                   ),
-                  icon: Icon(Icons.person_add_rounded,
-                      color: L.bg, size: 20),
+                  icon: const Icon(Icons.person_add_rounded,
+                      color: AppColors.limeInk, size: 20),
                   label: Text(
                     'Add guardian',
                     style: AppTypography.labelLarge.copyWith(
-                      color: L.bg,
-                      fontWeight: FontWeight.w700
+                      color: AppColors.limeInk,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
@@ -385,7 +411,9 @@ class HubView extends StatelessWidget {
                               margin: const EdgeInsets.only(bottom: AppSpacing.p12),
                               padding: const EdgeInsets.all(AppSpacing.p16),
                               decoration: BoxDecoration(
-                                color: AppColors.pastelPink,
+                                color: context.isDark
+                                    ? AppColors.red.withValues(alpha: 0.16)
+                                    : AppColors.pastelPink,
                                 borderRadius: BorderRadius.circular(AppRadius.l),
                               ),
                               child: Row(
@@ -394,7 +422,9 @@ class HubView extends StatelessWidget {
                                     width: 40,
                                     height: 40,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.75),
+                                      color: context.isDark
+                                          ? Colors.white.withValues(alpha: 0.1)
+                                          : Colors.white.withValues(alpha: 0.75),
                                       borderRadius:
                                           BorderRadius.circular(AppRadius.s),
                                     ),
@@ -411,7 +441,9 @@ class HubView extends StatelessWidget {
                                           'Urgent monitoring',
                                           style: AppTypography.labelSmall
                                               .copyWith(
-                                            color: L.sub,
+                                            color: context.isDark
+                                                ? L.sub
+                                                : AppColors.grey600,
                                             fontWeight: FontWeight.w700,
                                           ),
                                         ),
@@ -419,7 +451,9 @@ class HubView extends StatelessWidget {
                                           '$unseenCount missed medication alerts',
                                           style: AppTypography.titleMedium
                                               .copyWith(
-                                            color: L.text,
+                                            color: context.isDark
+                                                ? L.text
+                                                : AppColors.inkStrong,
                                             fontWeight: FontWeight.w800,
                                           ),
                                         ),
@@ -427,7 +461,10 @@ class HubView extends StatelessWidget {
                                     ),
                                   ),
                                   Icon(Icons.arrow_outward_rounded,
-                                      color: L.sub.withValues(alpha: 0.5),
+                                      color: (context.isDark
+                                              ? L.sub
+                                              : AppColors.inkStrong)
+                                          .withValues(alpha: 0.5),
                                       size: 18),
                                 ],
                               ),
@@ -440,7 +477,9 @@ class HubView extends StatelessWidget {
                           margin: const EdgeInsets.only(bottom: AppSpacing.p24),
                           padding: const EdgeInsets.all(AppSpacing.p16),
                           decoration: BoxDecoration(
-                            color: AppColors.pastelSun,
+                            color: context.isDark
+                                ? AppColors.amber.withValues(alpha: 0.16)
+                                : AppColors.pastelSun,
                             borderRadius: BorderRadius.circular(AppRadius.l),
                           ),
                           child: Row(
@@ -449,12 +488,17 @@ class HubView extends StatelessWidget {
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.75),
+                                  color: context.isDark
+                                      ? Colors.white.withValues(alpha: 0.1)
+                                      : Colors.white.withValues(alpha: 0.75),
                                   borderRadius:
                                       BorderRadius.circular(AppRadius.s),
                                 ),
                                 child: Icon(Icons.menu_book_rounded,
-                                    color: L.text, size: 20),
+                                    color: context.isDark
+                                        ? L.text
+                                        : AppColors.inkStrong,
+                                    size: 20),
                               ),
                               const SizedBox(width: AppSpacing.p12),
                               Expanded(
@@ -464,7 +508,9 @@ class HubView extends StatelessWidget {
                                     Text(
                                       'Know your medicine',
                                       style: AppTypography.titleMedium.copyWith(
-                                        color: L.text,
+                                        color: context.isDark
+                                            ? L.text
+                                            : AppColors.inkStrong,
                                         fontWeight: FontWeight.w800,
                                       ),
                                     ),
@@ -472,7 +518,9 @@ class HubView extends StatelessWidget {
                                     Text(
                                       'Sensitive meds in this circle — caregivers should review warnings before dose time.',
                                       style: AppTypography.bodySmall.copyWith(
-                                        color: L.sub,
+                                        color: context.isDark
+                                            ? L.sub
+                                            : AppColors.grey600,
                                         height: 1.35,
                                       ),
                                     ),
@@ -841,7 +889,7 @@ class _CompactPivotPill extends StatelessWidget {
           child: Text(
             label,
             style: AppTypography.labelSmall.copyWith(
-              color: active ? Colors.white : L.text.withValues(alpha: 0.65),
+              color: active ? AppColors.limeInk : L.text.withValues(alpha: 0.65),
               fontSize: 12,
               fontWeight: active ? FontWeight.w700 : FontWeight.w600,
             ),

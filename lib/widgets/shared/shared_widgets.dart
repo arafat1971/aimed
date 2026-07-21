@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -249,23 +248,26 @@ class GlassCard extends StatelessWidget {
       clipper: ShapeBorderClipper(
         shape: ContinuousRectangleBorder(borderRadius: r),
       ),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: AnimatedContainer(
+      child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOutCubic,
           width: width,
           height: height,
           padding: padding ?? const EdgeInsets.all(20),
           decoration: ShapeDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                (tintColor ?? Colors.white).withValues(alpha: 0.14),
-                (tintColor ?? Colors.white).withValues(alpha: 0.04),
-              ],
-            ),
+            color: context.isDark
+                ? (tintColor ?? Colors.white).withValues(alpha: 0.10)
+                : (tintColor ?? Colors.white).withValues(alpha: 0.88),
+            gradient: context.isDark
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      (tintColor ?? Colors.white).withValues(alpha: 0.14),
+                      (tintColor ?? Colors.white).withValues(alpha: 0.04),
+                    ],
+                  )
+                : null,
             shape: ContinuousRectangleBorder(
               borderRadius: r,
               side: showBorder
@@ -279,7 +281,6 @@ class GlassCard extends StatelessWidget {
           ),
           child: child,
         ),
-      ),
     );
 
     if (onTap != null) {
@@ -517,14 +518,12 @@ class AppToast extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(99),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                child: Container(
+              child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: context.isDark
-                        ? Colors.black.withValues(alpha: 0.45)
-                        : Colors.white.withValues(alpha: 0.8),
+                        ? Colors.black.withValues(alpha: 0.88)
+                        : Colors.white.withValues(alpha: 0.96),
                     borderRadius: BorderRadius.circular(99),
                     border: Border.all(
                       color: accentColor.withValues(alpha: 0.25),
@@ -569,7 +568,6 @@ class AppToast extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
             ),
           )
               .animate()
@@ -874,11 +872,19 @@ class MedImage extends StatelessWidget {
                 color: L.sub, size: width != null ? width! * 0.4 : 24),
           );
     } else if (imageUrl!.startsWith('http')) {
+      final dpr = MediaQuery.devicePixelRatioOf(context);
+      final cacheW =
+          width != null ? (width! * dpr).round() : null;
+      final cacheH =
+          height != null ? (height! * dpr).round() : null;
       image = Image.network(
         imageUrl!,
         width: width,
         height: height,
         fit: fit,
+        cacheWidth: cacheW,
+        cacheHeight: cacheH,
+        filterQuality: FilterQuality.medium,
         errorBuilder: (context, error, stackTrace) =>
             placeholder ??
             Container(
@@ -1129,7 +1135,7 @@ class _DoseCardState extends State<DoseCard>
                               : const Duration(milliseconds: 500),
                           transitionBuilder: (child, anim) {
                             final scale = Tween<double>(begin: 0.72, end: 1.0).animate(
-                              CurvedAnimation(parent: anim, curve: Curves.elasticOut),
+                              CurvedAnimation(parent: anim, curve: AppCurves.emilOut),
                             );
                             return ScaleTransition(scale: scale, child: child);
                           },

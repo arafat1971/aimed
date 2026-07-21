@@ -62,14 +62,17 @@ class _EditFamilyMemberScreenState extends State<EditFamilyMemberScreen> {
     HapticEngine.selection();
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      final appDir = await getApplicationDocumentsDirectory();
-      final fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}${p.extension(picked.path)}';
-      final savedFile = await File(picked.path).copy(p.join(appDir.path, fileName));
-      setState(() {
-        _photoPath = savedFile.path;
-      });
-    }
+    if (picked == null) return;
+    final appDir = await getApplicationDocumentsDirectory();
+    if (!mounted) return;
+    final fileName =
+        'profile_${DateTime.now().millisecondsSinceEpoch}${p.extension(picked.path)}';
+    final savedFile =
+        await File(picked.path).copy(p.join(appDir.path, fileName));
+    if (!mounted) return;
+    setState(() {
+      _photoPath = savedFile.path;
+    });
   }
 
   @override
